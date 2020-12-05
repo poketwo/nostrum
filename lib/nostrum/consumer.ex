@@ -64,6 +64,8 @@ defmodule Nostrum.Consumer do
           | {:max_seconds, non_neg_integer()}
           | {:subscribe_to, [GenStage.stage() | {GenStage.stage(), keyword()}]}
 
+  @type socket_raw_receive :: {:SOCKET_RAW_RECEIVE, map, WSState.t()}
+
   @type channel_create :: {:CHANNEL_CREATE, Channel.t(), WSState.t()}
   @type channel_delete :: {:CHANNEL_DELETE, Channel.t(), WSState.t()}
   @typedoc """

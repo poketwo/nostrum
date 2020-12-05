@@ -49,6 +49,8 @@ defmodule Nostrum.Shard.Dispatch do
     end
   end
 
+  def handle_event(:SOCKET_RAW_RECEIVE = event, p, state), do: {event, p, state}
+
   def handle_event(:CHANNEL_CREATE = event, %{type: 1} = p, state) do
     {event, ChannelCache.create(p), state}
   end

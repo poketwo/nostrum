@@ -8,6 +8,8 @@ defmodule Nostrum.Shard.Event do
   require Logger
 
   def handle(:dispatch, payload, state) do
+    Producer.notify(Producer, %{d: payload, t: :SOCKET_RAW_RECEIVE}, state)
+
     payload = Util.safe_atom_map(payload)
 
     if Application.get_env(:nostrum, :log_dispatch_events),
