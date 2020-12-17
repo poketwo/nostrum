@@ -36,9 +36,12 @@ defmodule Nostrum.Shard.Supervisor do
           raise ~s("#{value}" is not a valid shard count)
       end
 
+    cluster_id = Application.get_env(:nostrum, :cluster_id, 0)
+    num_clusters = Application.get_env(:nostrum, :num_clusters, 1)
+
     Supervisor.start_link(
       __MODULE__,
-      [url, num_shards],
+      [url, num_shards, cluster_id, num_clusters],
       name: ShardSupervisor
     )
   end
@@ -74,12 +77,10 @@ defmodule Nostrum.Shard.Supervisor do
   end
 
   @doc false
-  def init([url, num_shards]) do
+  def init([url, num_shards, cluster_id, num_clusters]) do
     children =
-      [
-        Producer,
-        Cache
-      ] ++ for i <- 0..(num_shards - 1), do: create_worker(url, i)
+      [Producer, Cache] ++
+        for i <- :lists.seq(cluster_id, num_shards - 1, num_clusters), do: create_worker(url, i)
 
     Supervisor.init(children, strategy: :one_for_one, max_restarts: 3, max_seconds: 60)
   end
